@@ -7,9 +7,9 @@ class AgentAI:
 
 	def minimax(self, game, player, depth=0):
 		if game.game_end():
-			if game.winner(self.my_id):
+			if game.is_winner(self.my_id):
 				return 1
-			elif game.winner(self.p2_id):
+			elif game.is_winner(self.p2_id):
 				return -1
 			else :
 				return 0
@@ -34,4 +34,24 @@ class AgentAI:
 				return max(res)
 			else:
 				return min(res)
+
+
+class HumanPlayer:
+	def __init__(self, player_id):
+		self.player_id = player_id
+
+	def make_move(self, game):
+		ml = game.get_allowed_moves(self)
+		print(ml)
+		move = int(input("Select move: "))
+		game.apply_move(self.player_id, ml[move])
+
+
+def countSymbolOn2DBoard(symbol, board):
+	counter = 0
+	for x in board:
+		for s in x:
+			if s == symbol:
+				counter += 1
+	return counter
 

@@ -1,4 +1,4 @@
-from agent_module import AgentAI
+from agent_module import AgentAI, HumanPlayer
 
 class OX:
 	def __init__(self, player1, player2):
@@ -11,7 +11,7 @@ class OX:
 		for r in self.board:
 			print(''.join(r))
 
-	def get_allowed_moves(self):
+	def get_allowed_moves(self, player=None):
 		res = []
 		for x in range(3):
 			for y in range(3):
@@ -20,9 +20,9 @@ class OX:
 		return res
 
 	def apply_move(self, player, move):
-		self.board[move[0]][move[1]] = player
+		self.board[move[0]][move[1]] = player.player_id
 
-	def winner(self, player):
+	def is_winner(self, player):
 		for row in range(3):
 			if self.board[row] == [player]*3:
 				return True
@@ -38,9 +38,9 @@ class OX:
 	def game_end(self):
 		if not self.get_allowed_moves():
 			return True
-		if self.winner(self.player1.player_id):
+		if self.is_winner(self.player1.player_id):
 			return True
-		if self.winner(self.player2.player_id):
+		if self.is_winner(self.player2.player_id):
 			return True
 
 		return False
@@ -51,6 +51,14 @@ class OX:
 		else :
 			self.current_player = self.player1
 
+	def print_game_result(self):
+		if self.is_winner(self.player1.player_id):
+			print("Winner: Player1")
+		elif self.is_winner(self.player2.player_id):
+			print("Winner: Player2")
+		else:
+			print("Draw")
+
 	def play(self):
 		while not self.game_end():
 			print()
@@ -60,17 +68,7 @@ class OX:
 
 		print("End of Game")
 		self.print_board()
-
-
-class HumanPlayer:
-	def __init__(self, player_id):
-		self.player_id = player_id
-
-	def make_move(self, game):
-		ml = game.get_allowed_moves()
-		print(ml)
-		move = int(input("Select move: "))
-		game.apply_move( self.player_id, ml[move])
+		self.print_game_result()
 
 
 class NPCPlayer(AgentAI):
@@ -83,5 +81,5 @@ class NPCPlayer(AgentAI):
 		move = self.minimax(game, self.player_id)
 		game.apply_move(self.player_id, move)
 
-game = OX(HumanPlayer('x'), NPCPlayer('o', 'x'))
+game = OX(NPCPlayer('x', 'o'), NPCPlayer('o', 'x'))
 game.play()

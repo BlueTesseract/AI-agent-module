@@ -19,8 +19,8 @@ class OX:
 					res.append((x,y))
 		return res
 
-	def apply_move(self, player, move):
-		self.board[move[0]][move[1]] = player.player_id
+	def apply_move(self, player_id, move):
+		self.board[move[0]][move[1]] = player_id
 
 	def is_winner(self, player):
 		for row in range(3):

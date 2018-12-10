@@ -14,7 +14,7 @@ class AgentAI:
 			else :
 				return 0
 
-		moves = game.get_allowed_moves()
+		moves = game.get_allowed_moves(player)
 		res = []
 		for m in moves:
 			game_copy = deepcopy(game)
@@ -42,9 +42,10 @@ class HumanPlayer:
 
 	def make_move(self, game):
 		ml = game.get_allowed_moves(self)
-		print(ml)
+		for index, m in enumerate(ml):
+			print(str(index)+":", m)
 		move = int(input("Select move: "))
-		game.apply_move(self.player_id, ml[move])
+		game.apply_move(self, ml[move])
 
 
 def countSymbolOn2DBoard(symbol, board):

@@ -1,14 +1,17 @@
-from agent_module import AgentAI
+from agent_module import *
 
-class Reversi:
+class GameTemplate:
 	def __init__(self, player1, player2):
-		pass
-
-	def print_board(self):
 		pass
 
 	def get_allowed_moves(self, player):
 		pass
+
+	def get_opponent(self, player):
+		if player.player_id == self.player1.player_id:
+			return self.player2
+		else:
+			return self.player1
 
 	def apply_move(self, player, move):
 		pass
@@ -21,3 +24,5 @@ class Reversi:
 
 	def start_game(self):
 		pass
+
+

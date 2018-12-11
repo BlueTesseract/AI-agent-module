@@ -11,6 +11,12 @@ class OX:
 		for r in self.board:
 			print(''.join(r))
 
+	def get_opponent(self, player):
+		if player.player_id == self.player1.player_id:
+			return self.player2
+		else:
+			return self.player1
+
 	def get_allowed_moves(self, player=None):
 		res = []
 		for x in range(3):
@@ -19,30 +25,29 @@ class OX:
 					res.append((x,y))
 		return res
 
-	def apply_move(self, player_id, move):
-		self.board[move[0]][move[1]] = player_id
+	def apply_move(self, player, move):
+		self.board[move[0]][move[1]] = player.player_id
 
 	def is_winner(self, player):
+		player_id = player.player_id
 		for row in range(3):
-			if self.board[row] == [player]*3:
+			if self.board[row] == [player_id]*3:
 				return True
-			if [self.board[i][row] for i in range(3)] == [player]*3:
+			if [self.board[i][row] for i in range(3)] == [player_id]*3:
 				return True
-		if [self.board[i][i] for i in range(3)] == [player]*3:
+		if [self.board[i][i] for i in range(3)] == [player_id]*3:
 			return True
-		if [self.board[i][2-i] for i in range(3)] == [player]*3:
+		if [self.board[i][2-i] for i in range(3)] == [player_id]*3:
 			return True
 		return False
-
 
 	def game_end(self):
 		if not self.get_allowed_moves():
 			return True
-		if self.is_winner(self.player1.player_id):
+		if self.is_winner(self.player1):
 			return True
-		if self.is_winner(self.player2.player_id):
+		if self.is_winner(self.player2):
 			return True
-
 		return False
 
 	def swap_player(self):
@@ -52,34 +57,33 @@ class OX:
 			self.current_player = self.player1
 
 	def print_game_result(self):
-		if self.is_winner(self.player1.player_id):
+		if self.is_winner(self.player1):
 			print("Winner: Player1")
-		elif self.is_winner(self.player2.player_id):
+		elif self.is_winner(self.player2):
 			print("Winner: Player2")
 		else:
 			print("Draw")
 
-	def play(self):
+	def start_game(self):
 		while not self.game_end():
 			print()
 			self.print_board()
 			self.current_player.make_move(self)
 			self.swap_player()
 
+		print()
 		print("End of Game")
 		self.print_board()
 		self.print_game_result()
 
 
 class NPCPlayer(AgentAI):
-	def __init__(self, player_id, oponent_id):
-		self.player_id = player_id
-		self.oponent_id = oponent_id
-		super().__init__(player_id, oponent_id)
+	def __init__(self, player_id):
+		super().__init__(player_id)
 
 	def make_move(self, game):
-		move = self.minimax(game, self.player_id)
-		game.apply_move(self.player_id, move)
+		move = self.minimax(game, self)
+		game.apply_move(self, move)
 
-game = OX(NPCPlayer('x', 'o'), NPCPlayer('o', 'x'))
-game.play()
+game = OX(NPCPlayer('x'), NPCPlayer('o'))
+game.start_game()

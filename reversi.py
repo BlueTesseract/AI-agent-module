@@ -63,7 +63,7 @@ class Reversi:
 				replaceSymbolSerie(x, y, d, self.board, player.player_id, op.player_id)
 
 	def get_opponent(self, player):
-		if player == self.player1:
+		if player.player_id == self.player1.player_id:
 			return self.player2
 		else:
 			return self.player1
@@ -89,101 +89,27 @@ class Reversi:
 		while not self.game_end():
 			print()
 			self.print_board()
-			self.current_player.make_move(self)
+			if game.get_allowed_moves(self.current_player):
+				self.current_player.make_move(self)
+			else:
+				print("Player:", self.current_player.player_id, "has lost his or her turn.")
 			self.swap_player()
 
+		print()
 		self.print_board()
 		print()
 		print("End of Game")
 		self.print_game_result()
 
 
+class NPCPlayer(AgentAI):
+	def __init__(self, player_id):
+		super().__init__(player_id)
 
-def isOnBoard(x, y, board2d):
-	if x < 0 or y < 0:
-		return False
-	try:
-		a = board2d[x][y]
-	except IndexError:
-		return False
-	return True
-
-def checkIfFieldEqSymbol(x, y, symbol, board2d):
-	if isOnBoard(x, y, board2d) and board2d[x][y] == symbol:
-		return True
-	return False
-
-def getDiffForDir(direction):
-	# 0 1 2
-	# 7 X 3
-	# 6 5 4
-	if direction == 0:
-		return -1, -1
-	if direction == 1:
-		return -1, 0
-	if direction == 2:
-		return -1, 1
-	if direction == 3:
-		return 0, 1
-	if direction == 4:
-		return 1, 1
-	if direction == 5:
-		return 1, 0
-	if direction == 6:
-		return 1, -1
-	if direction == 7:
-		return 0, -1
+	def make_move(self, game):
+		move = self.random_move(game, self)
+		game.apply_move(self, move)
 
 
-def getDirOfSymbolInNeighborhood(board2d, r, c, symbol):
-	res = []
-	for d in range(8):
-		rd,cd = getDiffForDir(d)
-		if checkIfFieldEqSymbol(r+rd, c+cd, symbol, board2d):
-			res.append(d)
-	return res
-
-def	applyFunInDirection(direction, apply_function, board2d, x, y):
-	rd, cd = getDiffForDir(direction)
-	cont = True
-	while cont:
-		x += rd
-		y += cd
-		if not isOnBoard(x, y, board2d):
-			return
-		cont = apply_function(x, y, board2d)
-
-
-def replaceSymbolSerie(x, y, direction, board2d, replace_to, sym_in_serie):
-	def to_apply(x, y, board, s=replace_to, ss=sym_in_serie):
-		if board[x][y] == ss:
-			board[x][y] = s
-			return True
-		else:
-			return False
-	applyFunInDirection(direction, to_apply, board2d, x, y)
-
-def checkFunInDirection(direction, check_function, board2d, x, y):
-	res = False
-	rd, cd = getDiffForDir(direction)
-	cont = True
-	while cont:
-		x += rd
-		y += cd
-		if not isOnBoard(x, y, board2d):
-			return False
-		cont, res = check_function(board2d[x][y])
-	return res
-
-
-def isSymbolAfterSymbolSerie(x, y, direction, board2d, sym, sym_in_serie):
-	def to_check(field, s=sym, ss=sym_in_serie):
-		if field == ss:
-			return True, False
-		if field == s:
-			return False, True
-		return False, False
-	return checkFunInDirection(direction, to_check, board2d, x, y)
-
-game = Reversi(HumanPlayer('x'), HumanPlayer('o'))
+game = Reversi(HumanPlayer('x'), NPCPlayer('o'))
 game.start_game()

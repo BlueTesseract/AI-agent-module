@@ -82,8 +82,18 @@ class NPCPlayer(AgentAI):
 		super().__init__(player_id)
 
 	def make_move(self, game):
-		move = self.minimax(game, self)
+		move = self.minimax_move(game)
 		game.apply_move(self, move)
 
-game = OX(NPCPlayer('x'), NPCPlayer('o'))
+
+class NPCPlayerAlphaBeta(AgentAI):
+	def __init__(self, player_id):
+		super().__init__(player_id)
+
+	def make_move(self, game):
+		move = self.alpha_beta_move(game)
+		game.apply_move(self, move)
+
+
+game = OX(NPCPlayerAlphaBeta('x'), NPCPlayer('o'))
 game.start_game()

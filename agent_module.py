@@ -15,8 +15,8 @@ class AgentAI:
 	def minimax_move(self, game):
 		return self._minimax(game, self)
 
-	def random_move(self, game, player):
-		ml = game.get_allowed_moves(player)
+	def random_move(self, game):
+		ml = game.get_allowed_moves(self)
 		return random.choice(ml)
 
 	def alpha_beta_move(self, game, depth=0, alpha=-math.inf, beta=math.inf):
@@ -111,7 +111,7 @@ class AgentAI:
 	def simulate_random_game(self, game, player):
 		while not game.game_end():
 			if game.get_allowed_moves(player):
-				move = self.random_move(game, player)
+				move = player.random_move(game)
 				game.apply_move(player, move)
 			player = game.get_opponent(player)
 

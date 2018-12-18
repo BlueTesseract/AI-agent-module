@@ -2,7 +2,9 @@ from agent_module import *
 
 class GameTemplate:
 	def __init__(self, player1, player2):
-		pass
+		self.player1 = player1
+		self.player2 = player2
+		self.current_player = player1
 
 	def get_allowed_moves(self, player):
 		pass
@@ -26,3 +28,14 @@ class GameTemplate:
 		pass
 
 
+class NPCPlayer(AgentAI):
+	def __init__(self, player_id):
+		super().__init__(player_id)
+
+	def make_move(self, game):
+		move = self.random_move(game)
+		game.apply_move(self, move)
+
+
+game = GameTemplate(NPCPlayer('x'), NPCPlayer('o'))
+game.start_game()

@@ -32,7 +32,7 @@ class Reversi:
 		else:
 			self.current_player = self.player1
 
-	def is_empty(slef, field):
+	def is_empty(self, field):
 		if	field == '.':
 			return True
 		else:
@@ -104,7 +104,7 @@ class Reversi:
 
 class NPCPlayerAlphaBeta(AgentAI):
 	def __init__(self, player_id):
-		super().__init__(player_id, max_depth=2, number_simulations=10)
+		super().__init__(player_id, max_depth=2, number_simulations=2)
 
 	def make_move(self, game):
 		move = self.alpha_beta_move(game)
@@ -116,7 +116,7 @@ class NPCPlayerRandom(AgentAI):
 		super().__init__(player_id)
 
 	def make_move(self, game):
-		move = self.random_move(game, self)
+		move = self.random_move(game)
 		game.apply_move(self, move)
 
 

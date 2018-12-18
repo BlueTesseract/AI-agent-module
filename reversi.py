@@ -27,7 +27,7 @@ class Reversi:
 			print("Draw")
 
 	def swap_player(self):
-		if self.current_player == self.player1:
+		if self.current_player.player_id == self.player1.player_id:
 			self.current_player = self.player2
 		else:
 			self.current_player = self.player1
@@ -89,7 +89,7 @@ class Reversi:
 		while not self.game_end():
 			print()
 			self.print_board()
-			if game.get_allowed_moves(self.current_player):
+			if self.get_allowed_moves(self.current_player):
 				self.current_player.make_move(self)
 			else:
 				print("Player:", self.current_player.player_id, "has lost his or her turn.")
@@ -102,7 +102,16 @@ class Reversi:
 		self.print_game_result()
 
 
-class NPCPlayer(AgentAI):
+class NPCPlayerAlphaBeta(AgentAI):
+	def __init__(self, player_id):
+		super().__init__(player_id, max_depth=2, number_simulations=10)
+
+	def make_move(self, game):
+		move = self.alpha_beta_move(game)
+		game.apply_move(self, move)
+
+
+class NPCPlayerRandom(AgentAI):
 	def __init__(self, player_id):
 		super().__init__(player_id)
 
@@ -111,5 +120,5 @@ class NPCPlayer(AgentAI):
 		game.apply_move(self, move)
 
 
-game = Reversi(HumanPlayer('x'), NPCPlayer('o'))
+game = Reversi(NPCPlayerRandom('x'), NPCPlayerAlphaBeta('o'))
 game.start_game()

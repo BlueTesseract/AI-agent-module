@@ -51,7 +51,7 @@ class OX:
 		return False
 
 	def swap_player(self):
-		if self.current_player == self.player1:
+		if self.current_player.player_id == self.player1.player_id:
 			self.current_player = self.player2
 		else :
 			self.current_player = self.player1

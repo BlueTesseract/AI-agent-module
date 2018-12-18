@@ -3,10 +3,90 @@ import math
 from copy import deepcopy
 
 class AgentAI:
-	def __init__(self, player_id, game_heuristic=None, alg_max_depth=math.inf):
+	def __init__(self, player_id, game_heuristic=None, number_simulations=100, max_depth=math.inf):
 		self.player_id = player_id
-		self.game_heuristic = None
-		self.max_depth = alg_max_depth
+		self.game_heuristic = game_heuristic
+		self.number_simulations = number_simulations
+		if game_heuristic == None:
+			self.game_heuristic = self.random_simulate_heuristic
+		self.max_depth = max_depth
+		self.mcts_tree = None
+
+	def minimax_move(self, game):
+		return self._minimax(game, self)
+
+	def random_move(self, game, player):
+		ml = game.get_allowed_moves(player)
+		return random.choice(ml)
+
+	def alpha_beta_move(self, game, depth=0, alpha=-math.inf, beta=math.inf):
+		return self.minimax_alpha(game, self, depth, alpha, beta)
+
+# https://www.baeldung.com/java-monte-carlo-tree-search
+	def mcts_move(self, game):
+		if self.mcts_tree == None:
+			self.mcts_tree = MCTSTree()
+		move = self._mcts(game, self)
+		self.mcts_tree = None
+
+
+# Helper-Functions
+	def _mcts(self, game, player):
+		moves = game.get_allowed_moves(player)
+
+	def _minimax(self, game, player, depth=0):
+		if game.game_end():
+			return self.return_minimax_game_end(game)
+
+		if depth >= self.max_depth:
+			return self.game_heuristic(game, player)
+
+		moves = game.get_allowed_moves(player)
+		res = []
+		for m in moves:
+			game_copy = deepcopy(game)
+			game_copy.apply_move(player, m)
+			res.append(self._minimax(game_copy, game.get_opponent(player), depth+1))
+		return self.return_minimax(depth, player, moves, res)
+
+	def minimax_alpha(self, game, player, depth, alpha, beta):
+		if game.game_end():
+			return self.return_minimax_game_end(game)
+
+		if depth >= self.max_depth:
+			return self.game_heuristic(game, player)
+
+		moves = game.get_allowed_moves(player)
+		if moves == []:
+			return alpha
+
+		res = []
+		for m in moves:
+			game_copy = deepcopy(game)
+			game_copy.apply_move(player, m)
+			alpha = max(alpha, self.minimax_beta(game_copy, game.get_opponent(player), depth+1, alpha, beta))
+			res.append(alpha)
+			if alpha >= beta:
+				if depth == 0:
+					return moves[res.index(max(res))]
+				return beta
+		return self.return_minimax(depth, player, moves, res)
+
+	def minimax_beta(self, game, player, depth, alpha, beta):
+		if game.game_end():
+			return self.return_minimax_game_end(game)
+
+		if depth >= self.max_depth:
+			return self.game_heuristic(game, player)
+
+		moves = game.get_allowed_moves(player)
+		for m in moves:
+			game_copy = deepcopy(game)
+			game_copy.apply_move(player, m)
+			beta = min(beta, self.minimax_alpha(game_copy, game.get_opponent(player), depth+1, alpha, beta))
+			if alpha >= beta:
+				return alpha
+		return beta
 
 	def return_minimax(self, depth, player, moves, res):
 		if depth == 0:
@@ -28,66 +108,30 @@ class AgentAI:
 		else:
 			return 0
 
-	def minimax_move(self, game):
-		return self._minimax(game, self)
+	def simulate_random_game(self, game, player):
+		while not game.game_end():
+			if game.get_allowed_moves(player):
+				move = self.random_move(game, player)
+				game.apply_move(player, move)
+			player = game.get_opponent(player)
 
-	def _minimax(self, game, player, depth=0):
-		if game.game_end():
-			return self.return_minimax_game_end(game)
+		if game.is_winner(self):
+			return 1
+		elif game.is_winner(game.get_opponent(self)):
+			return -1
+		return 0
 
-		if depth >= self.max_depth:
-			return self.game_heuristic(game, player)
+	def simulate_n_random_games(self, game, player, n):
+		summary = 0
 
-		moves = game.get_allowed_moves(player)
-		res = []
-		for m in moves:
+		for i in range(n):
 			game_copy = deepcopy(game)
-			game_copy.apply_move(player, m)
-			res.append(self._minimax(game_copy, game.get_opponent(player), depth+1))
-		return self.return_minimax(depth, player, moves, res)
+			summary += self.simulate_random_game(game_copy, player)
 
-	def random_move(self, game, player):
-		ml = game.get_allowed_moves(player)
-		return random.choice(ml)
+		return summary
 
-	def alpha_beta_move(self, game, depth=0, alpha=-math.inf, beta=math.inf):
-		return self.minimax_alpha(game, self, depth, alpha, beta)
-
-
-	def minimax_alpha(self, game, player, depth, alpha, beta):
-		if game.game_end():
-			return self.return_minimax_game_end(game)
-
-		if depth >= self.max_depth:
-			return self.game_heuristic(game, player)
-
-		moves = game.get_allowed_moves(player)
-		res = []
-		for m in moves:
-			game_copy = deepcopy(game)
-			game_copy.apply_move(player, m)
-			alpha = max(alpha, self.minimax_beta(game_copy, game.get_opponent(player), depth+1, alpha, beta))
-			res.append(alpha)
-			if alpha >= beta:
-				return beta
-		return self.return_minimax(depth, player, moves, res)
-
-	def minimax_beta(self, game, player, depth, alpha, beta):
-		if game.game_end():
-			return self.return_minimax_game_end(game)
-
-		if depth >= self.max_depth:
-			return self.game_heuristic(game, player)
-
-		moves = game.get_allowed_moves(player)
-		for m in moves:
-			game_copy = deepcopy(game)
-			game_copy.apply_move(player, m)
-			beta = min(beta, self.minimax_alpha(game_copy, game.get_opponent(player), depth+1, alpha, beta))
-			if alpha >= beta:
-				return alpha
-		return beta
-
+	def random_simulate_heuristic(self, game, player):
+		return self.simulate_n_random_games(game, player, self.number_simulations)
 
 
 def countSymbolOn2DBoard(symbol, board):

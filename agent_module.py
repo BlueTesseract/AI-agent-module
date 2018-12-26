@@ -143,11 +143,13 @@ def countSymbolOn2DBoard(symbol, board):
 	return counter
 
 
-def isOnBoard(x, y, board2d):
+def isOnBoard(x, y, board2d, outOfBoardSymbols=[]):
 	if x < 0 or y < 0:
 		return False
 	try:
-		a = board2d[x][y]
+		field = board2d[x][y]
+		if field in outOfBoardSymbols:
+			return False
 	except IndexError:
 		return False
 	return True
@@ -257,3 +259,17 @@ class HumanPlayer:
 			game.apply_move(self, ml[move])
 		else:
 			print("Player:", self.player_id, "has lost turn")
+
+
+def print_board(game):
+	for r in game.board:
+		print(''.join(r))
+
+
+def print_game_result(game):
+	if game.is_winner(game.player1):
+		print("Winner: Player1")
+	elif game.is_winner(game.player2):
+		print("Winner: Player2")
+	else:
+		print("Draw")

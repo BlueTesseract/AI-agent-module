@@ -6,6 +6,27 @@ class FoxGame:
 		self.player2 = player2
 		self.current_player = player1
 
+		self.board = [	'      .--.--.      ',
+						'      |\ | /|      ',
+						'      | \|/ |      ',
+						'      .--.--.      ',
+						'      | /|\ |      ',
+						'      |/ | \|      ',
+						'.--.--.--.--.--.--.',
+						'|\ | /|\ | /|\ | /|',
+						'| \|/ | \|/ | \|/ |',
+						'.--.--.--x--.--.--.',
+						'| /|\ | /|\ | /|\ |',
+						'|/ | \|/ | \|/ | \|',
+						'o--o--o--o--o--o--o',
+						'      |\ | /|      ',
+						'      | \|/ |      ',
+						'      o--o--o      ',
+						'      | /|\ |      ',
+						'      |/ | \|      ',
+						'      o--o--o      ']
+
+
 	def get_allowed_moves(self, player):
 		pass
 
@@ -22,10 +43,20 @@ class FoxGame:
 		pass
 
 	def game_end(self):
-		pass
+		return True
 
 	def start_game(self):
-		pass
+		while not self.game_end():
+			print()
+			print_board(self)
+			self.current_player.make_move(self)
+			self.swap_player()
+
+		print()
+		print("End of Game")
+		print_board(self)
+		print_game_result(self)
+
 
 
 class NPCPlayer(AgentAI):
@@ -37,5 +68,5 @@ class NPCPlayer(AgentAI):
 		game.apply_move(self, move)
 
 
-game = FoxGame(NPCPlayer('x'), NPCPlayer('o'))
+game = FoxGame(NPCPlayer('o'), NPCPlayer('x'))
 game.start_game()

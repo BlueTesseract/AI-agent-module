@@ -3,6 +3,7 @@ from agent_module import AgentAI, HumanPlayer
 class OX:
 	def __init__(self, player1, player2):
 		self.board = [ ['.', '.', '.'], ['.', '.', '.'], ['.', '.', '.'] ]
+		# self.board = GameBoard(self.board)
 		self.player1 = player1
 		self.player2 = player2
 		self.current_player = player1
@@ -12,7 +13,7 @@ class OX:
 			print(''.join(r))
 
 	def get_opponent(self, player):
-		if player.player_id == self.player1.player_id:
+		if player == self.player1:
 			return self.player2
 		else:
 			return self.player1
@@ -51,7 +52,7 @@ class OX:
 		return False
 
 	def swap_player(self):
-		if self.current_player.player_id == self.player1.player_id:
+		if self.current_player == self.player1:
 			self.current_player = self.player2
 		else :
 			self.current_player = self.player1

@@ -4,9 +4,10 @@ class Reversi:
 	def __init__(self, player1, player2, rows=8, cols=8):
 		self.rows = rows
 		self.cols = cols
-		self.board = [['.' for _ in range(cols)] for _ in range(rows)]
-		self.board[3][3] = self.board[4][4] = player1.player_id
-		self.board[3][4] = self.board[4][3] = player2.player_id
+		board = [['.' for _ in range(cols)] for _ in range(rows)]
+		board[3][3] = board[4][4] = player1.player_id
+		board[3][4] = board[4][3] = player2.player_id
+		self.board = GameBoard(board)
 		self.player1 = player1
 		self.player2 = player2
 		self.current_player = player1
@@ -27,7 +28,7 @@ class Reversi:
 			print("Draw")
 
 	def swap_player(self):
-		if self.current_player.player_id == self.player1.player_id:
+		if self.current_player == self.player1:
 			self.current_player = self.player2
 		else:
 			self.current_player = self.player1
@@ -63,7 +64,7 @@ class Reversi:
 				replaceSymbolSerie(x, y, d, self.board, player.player_id, op.player_id)
 
 	def get_opponent(self, player):
-		if player.player_id == self.player1.player_id:
+		if player == self.player1:
 			return self.player2
 		else:
 			return self.player1
@@ -72,8 +73,8 @@ class Reversi:
 		if not self.game_end():
 			return False
 		op = self.get_opponent(player)
-		my_points = countSymbolOn2DBoard(player.player_id, self.board)
-		op_points = countSymbolOn2DBoard(op.player_id, self.board)
+		my_points = self.board.count_symbol(player.player_id)
+		op_points = self.board.count_symbol(op.player_id)
 
 		if my_points > op_points:
 			return True

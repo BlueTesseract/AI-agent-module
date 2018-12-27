@@ -10,7 +10,7 @@ class GameTemplate:
 		pass
 
 	def get_opponent(self, player):
-		if player.player_id == self.player1.player_id:
+		if player == self.player1:
 			return self.player2
 		else:
 			return self.player1

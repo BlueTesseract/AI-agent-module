@@ -2,6 +2,52 @@ import random
 import math
 from copy import deepcopy
 
+class GameBoard:
+	def __init__(self, board, unoccupied_symbols=['.'], out_of_board_symbols=[]):
+		self.board = board
+		self.out_of_board_symbols = out_of_board_symbols
+		self.unoccupied_symbols = unoccupied_symbols
+
+	def __getitem__(self, index):
+		return self.board[index]
+
+	def __len__(self):
+		return len(self.board)
+
+	def is_on_board(self, x, y):
+		if x < 0 or y < 0:
+			return False
+		try:
+			field = self.board[x][y]
+			if field in self.out_of_board_symbols:
+				return False
+		except IndexError:
+			return False
+		return True
+
+	def count_symbol(self, symbol):
+		counter = 0
+		for x in self.board:
+			for s in x:
+				if s == symbol:
+					counter += 1
+		return counter
+
+	def is_unoccupied(self, x, y):
+		if not self.is_on_board(x, y):
+			return False
+		if self.board[x][y] in self.unoccupied_symbols:
+			return True
+		return False
+
+	def is_occupied(self, x, y):
+		if not self.is_on_board(x, y):
+			return False
+		if self.board[x][y] in self.unoccupied_symbols:
+			return False
+		return True
+
+
 class AgentAI:
 	def __init__(self, player_id, game_heuristic=None, number_simulations=100, max_depth=math.inf):
 		self.player_id = player_id
@@ -90,12 +136,12 @@ class AgentAI:
 
 	def return_minimax(self, depth, player, moves, res):
 		if depth == 0:
-			if player.player_id == self.player_id:
+			if player == self:
 				return moves[res.index(max(res))]
 			else:
 				return moves[res.index(min(res))]
 		else:
-			if player.player_id == self.player_id:
+			if player == self:
 				return max(res)
 			else:
 				return min(res)
@@ -133,30 +179,13 @@ class AgentAI:
 	def random_simulate_heuristic(self, game, player):
 		return self.simulate_n_random_games(game, player, self.number_simulations)
 
+	def __eq__(self,other):
+		return self.player_id == other.player_id
 
-def countSymbolOn2DBoard(symbol, board):
-	counter = 0
-	for x in board:
-		for s in x:
-			if s == symbol:
-				counter += 1
-	return counter
-
-
-def isOnBoard(x, y, board2d, outOfBoardSymbols=[]):
-	if x < 0 or y < 0:
-		return False
-	try:
-		field = board2d[x][y]
-		if field in outOfBoardSymbols:
-			return False
-	except IndexError:
-		return False
-	return True
 
 
 def checkIfFieldEqSymbol(x, y, symbol, board2d):
-	if isOnBoard(x, y, board2d) and board2d[x][y] == symbol:
+	if board2d.is_on_board(x, y) and board2d[x][y] == symbol:
 		return True
 	return False
 
@@ -198,7 +227,7 @@ def	applyFunInDirection(direction, apply_function, board2d, x, y):
 	while cont:
 		x += rd
 		y += cd
-		if not isOnBoard(x, y, board2d):
+		if not board2d.is_on_board(x, y):
 			return
 		cont = apply_function(x, y, board2d)
 
@@ -220,7 +249,7 @@ def checkFunInDirection(direction, check_function, board2d, x, y):
 	while cont:
 		x += rd
 		y += cd
-		if not isOnBoard(x, y, board2d):
+		if not board2d.is_on_board(x, y):
 			return False
 		cont, res = check_function(board2d[x][y])
 	return res
@@ -236,7 +265,7 @@ def isSymbolAfterSymbolSerie(x, y, direction, board2d, sym, sym_in_serie):
 	return checkFunInDirection(direction, to_check, board2d, x, y)
 
 
-class HumanPlayer:
+class HumanPlayer(AgentAI):
 	def __init__(self, player_id):
 		self.player_id = player_id
 

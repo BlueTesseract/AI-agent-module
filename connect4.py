@@ -26,7 +26,7 @@ class Connect4:
 		return res
 
 	def get_opponent(self, player):
-		if player.player_id == self.player1.player_id:
+		if player == self.player1:
 			return self.player2
 		else:
 			return self.player1
@@ -65,7 +65,6 @@ class Connect4:
 					x += 1
 					y += 1
 				if self.four_in_row(pid, line):
-					print("\\")
 					return True
 
 		for cid in range(self.cols):
@@ -77,7 +76,6 @@ class Connect4:
 					x -= 1
 					y += 1
 				if self.four_in_row(pid, line):
-					print("/")
 					return True
 
 		return False

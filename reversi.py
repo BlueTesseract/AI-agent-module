@@ -121,14 +121,5 @@ class NPCPlayerMCTS(AgentAI):
 		game.apply_move(self, move)
 
 
-class NPCPlayerRandom(AgentAI):
-	def __init__(self, player_id):
-		super().__init__(player_id)
-
-	def make_move(self, game):
-		move = self.random_move(game)
-		game.apply_move(self, move)
-
-
-game = Reversi(NPCPlayerMCTS('x'), NPCPlayerRandom('o'))
+game = Reversi(NPCPlayerMCTS('x'), NPCPlayerAlphaBeta('o'))
 game.start_game()

@@ -47,6 +47,11 @@ class GameBoard:
 			return False
 		return True
 
+	def print_board(self):
+		for r in self.board:
+			print(''.join(r))
+
+
 class MCTSNode:
 	def __init__(self, parent, game, move, player):
 		self.parent = parent
@@ -369,9 +374,6 @@ class HumanPlayer(AgentAI):
 			print("Player:", self.player_id, "has lost turn")
 
 
-def print_board(game):
-	for r in game.board:
-		print(''.join(r))
 
 
 def print_game_result(game):

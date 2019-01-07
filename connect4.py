@@ -1,4 +1,4 @@
-from agent_module import *
+from agent_module import AgentAI
 
 class Connect4:
 	def __init__(self, player1, player2, rows=6, cols=7):
@@ -112,7 +112,16 @@ class Connect4:
 		self.print_game_result()
 
 
-class NPCPlayer(AgentAI):
+class NPCPlayerMCTS(AgentAI):
+	def __init__(self, player_id):
+		super().__init__(player_id, number_simulations=20)
+
+	def make_move(self, game):
+		move = self.mcts_move(game)
+		game.apply_move(self, move)
+
+
+class NPCPlayerRandom(AgentAI):
 	def __init__(self, player_id):
 		super().__init__(player_id)
 
@@ -121,5 +130,5 @@ class NPCPlayer(AgentAI):
 		game.apply_move(self, move)
 
 
-game = Connect4(NPCPlayer('x'), NPCPlayer('o'))
+game = Connect4(NPCPlayerRandom('x'), NPCPlayerMCTS('o'))
 game.start_game()

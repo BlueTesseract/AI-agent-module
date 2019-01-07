@@ -1,4 +1,4 @@
-from agent_module import *
+from agent_module import AgentAI, GameBoard, print_game_result
 
 class FoxGame:
 	def __init__(self, player1, player2):
@@ -170,17 +170,17 @@ class FoxGame:
 	def start_game(self):
 		while not self.game_end():
 			print()
-			print_board(self)
+			self.board.print_board()
 			self.current_player.make_move(self)
 			self.swap_player()
 
 		print()
 		print("End of Game")
-		print_board(self)
+		self.board.print_board()
 		print_game_result(self)
 
 
-class NPCPlayer(AgentAI):
+class NPCPlayerRandom(AgentAI):
 	def __init__(self, player_id):
 		super().__init__(player_id)
 
@@ -189,5 +189,21 @@ class NPCPlayer(AgentAI):
 		game.apply_move(self, move)
 
 
-game = FoxGame(HumanPlayer('o'), HumanPlayer('x'))
+class NPCPlayerFox(AgentAI):
+	def __init__(self, player_id):
+		super().__init__(player_id, number_simulations=10)
+
+	def make_move(self, game):
+		moves = game.get_allowed_moves(self)
+		moves = list(filter(lambda x: x[0] == 'capture', moves))
+
+		if moves:
+			move = max(moves, key=lambda x: len(x[2]))
+			game.apply_move(self, move)
+		else:
+			move = self.random_move(game)
+			game.apply_move(self, move)
+
+
+game = FoxGame(NPCPlayerRandom('o'), NPCPlayerFox('x'))
 game.start_game()

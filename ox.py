@@ -1,4 +1,4 @@
-from agent_module import AgentAI, HumanPlayer
+from agent_module import AgentAI
 
 class OX:
 	def __init__(self, player1, player2):
@@ -83,7 +83,7 @@ class NPCPlayer(AgentAI):
 		super().__init__(player_id)
 
 	def make_move(self, game):
-		move = self.minimax_move(game)
+		move = self.random_move(game)
 		game.apply_move(self, move)
 
 

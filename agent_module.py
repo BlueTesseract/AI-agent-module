@@ -47,6 +47,93 @@ class GameBoard:
 			return False
 		return True
 
+class MCTSNode:
+	def __init__(self, parent, game, move, player):
+		self.parent = parent
+		self.children = []
+		self.simulations = 0
+		self.win_playouts = 0
+		self.game = game
+		self.player = player
+		self.move = move
+
+class MCTSTree:
+	def __init__(self, game, player, exploration_parameter=1.41, max_loops=10):
+		self.total_simulations = 0
+		self.max_loops = max_loops
+		self.exploration_parameter = exploration_parameter
+		game_copy = deepcopy(game)
+		self.root = MCTSNode(None, game_copy, None, player)
+
+	def uct(self, mcts_node):
+		a = mcts_node.win_playouts / mcts_node.simulations
+		b = self.exploration_parameter * math.sqrt(math.log(self.total_simulations)/mcts_node.simulations)
+		return a+b
+
+	def is_leaf(self, node):
+		if node.children == []:
+			return True
+		else:
+			return False
+
+	def selection(self, node):
+		if self.is_leaf(node):
+			return node
+
+		current_max_node = None
+		current_max_uct = -1
+		for n in node.children:
+			if self.uct(n) > current_max_uct:
+				current_max_node = n
+				current_max_uct = self.uct(n)
+		return self.selection(current_max_node)
+
+	def expansion(self, node):
+		moves = node.game.get_allowed_moves(node.player)
+		if moves == [] and node.game.game_end() == False:
+			node.player = node.game.get_opponent(node.player)
+			moves = node.game.get_allowed_moves(node.player)
+		next_player = node.game.get_opponent(node.player)
+
+		for m in moves:
+			game_copy = deepcopy(node.game)
+			game_copy.apply_move(node.player, m)
+			node.children += [MCTSNode(node, game_copy, m, next_player)]
+
+	def simulation(self, node):
+		game_copy = deepcopy(node.game)
+		point = self.root.player.simulate_random_game(game_copy, node.player)
+		self.total_simulations += 1
+		if point != 1:
+			point = 0
+		self.back_propagation(node, point)
+
+	def back_propagation(self, node, point, simulations=1):
+		if node == None:
+			return
+		node.win_playouts += point
+		node.simulations += simulations
+		self.back_propagation(node.parent, point, simulations)
+
+	def mcts_move(self):
+		loops = self.max_loops
+
+		while loops:
+			loops -= 1
+			node = self.selection(self.root)
+			self.expansion(node)
+			for n in node.children:
+				self.simulation(n)
+
+		current_max_node = None
+		current_max_simulations = -1
+		for node in self.root.children:
+			if node.simulations > current_max_simulations:
+				current_max_node = node
+				current_max_simulations = node.simulations
+
+		return current_max_node.move
+
 
 class AgentAI:
 	def __init__(self, player_id, game_heuristic=None, number_simulations=100, max_depth=math.inf):
@@ -68,18 +155,11 @@ class AgentAI:
 	def alpha_beta_move(self, game, depth=0, alpha=-math.inf, beta=math.inf):
 		return self.minimax_alpha(game, self, depth, alpha, beta)
 
-# https://www.baeldung.com/java-monte-carlo-tree-search
 	def mcts_move(self, game):
-		if self.mcts_tree == None:
-			self.mcts_tree = MCTSTree()
-		move = self._mcts(game, self)
-		self.mcts_tree = None
-
+		mcts_tree = MCTSTree(game, self, max_loops=self.number_simulations)
+		return mcts_tree.mcts_move()
 
 # Helper-Functions
-	def _mcts(self, game, player):
-		moves = game.get_allowed_moves(player)
-
 	def _minimax(self, game, player, depth=0):
 		if game.game_end():
 			return self.return_minimax_game_end(game)
@@ -181,7 +261,6 @@ class AgentAI:
 
 	def __eq__(self,other):
 		return self.player_id == other.player_id
-
 
 
 def checkIfFieldEqSymbol(x, y, symbol, board2d):

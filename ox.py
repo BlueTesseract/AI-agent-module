@@ -1,16 +1,12 @@
-from agent_module import AgentAI
+from agent_module import AgentAI, GameBoard
 
 class OX:
 	def __init__(self, player1, player2):
 		self.board = [ ['.', '.', '.'], ['.', '.', '.'], ['.', '.', '.'] ]
-		# self.board = GameBoard(self.board)
+		self.board = GameBoard(self.board)
 		self.player1 = player1
 		self.player2 = player2
 		self.current_player = player1
-
-	def print_board(self):
-		for r in self.board:
-			print(''.join(r))
 
 	def get_opponent(self, player):
 		if player == self.player1:
@@ -68,13 +64,13 @@ class OX:
 	def start_game(self):
 		while not self.game_end():
 			print()
-			self.print_board()
+			self.board.print_board()
 			self.current_player.make_move(self)
 			self.swap_player()
 
 		print()
 		print("End of Game")
-		self.print_board()
+		self.board.print_board()
 		self.print_game_result()
 
 
@@ -83,7 +79,7 @@ class NPCPlayer(AgentAI):
 		super().__init__(player_id)
 
 	def make_move(self, game):
-		move = self.random_move(game)
+		move = self.minimax_move(game)
 		game.apply_move(self, move)
 
 

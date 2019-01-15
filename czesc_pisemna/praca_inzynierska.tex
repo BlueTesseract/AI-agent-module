@@ -11,9 +11,9 @@
 % Pamietaj o madrym (zgodnym z logicznym rozbiorem zdania oraz estetyka) recznym
 % zlamaniu wierszy w temacie pracy, zwlaszcza tego w jezyku pracy. Uzyj do tego
 % polecenia \fmlinebreak.
-%\polishtitle    {Projekt i implementacja biblioteki ułatwiającej tworzenie\fmlinebreak inteligentnych agentów grających w gry planszowe}
+\polishtitle    {Projekt i implementacja biblioteki ułatwiającej tworzenie\fmlinebreak inteligentnych agentów grających w gry planszowe}
 \englishtitle   {Projekt i implementacja biblioteki ułatwiającej tworzenie\fmlinebreak inteligentnych agentów grających w gry planszowe}
-%\polishabstract {\ldots}
+\polishabstract {W pracy tej została opisana tytułowa biblioteka oraz minimalne wprowadzenie teoretyczne potrzebne do zrozumienia działania, napisanego na potrzeby pracy, modułu python'owego. Niemniej jednak, głównym celem tej pracy było nauczenie czytelnika z korzystania możliwości oferowanych przez powyższą bibliotekę.}
 \englishabstract{\ldots}
 % w pracach wielu autorow nazwiska mozna oddzielic poleceniem \and
 \author         {Mikołaj Kowalik}
@@ -30,6 +30,19 @@
 %
 %\usepackage{graphicx,listings,amsmath,amssymb,amsthm,amsfonts,tikz}
 %
+\usepackage{listings}
+\usepackage{listings} %For code in appendix
+\lstset
+{ %Formatting for code in appendix
+    language=Python,
+    basicstyle=\footnotesize,
+    numbers=left,
+    stepnumber=1,
+    showstringspaces=false,
+    tabsize=1,
+    breaklines=true,
+    breakatwhitespace=false,
+}
 %%%%% WŁASNE DEFINICJE I POLECENIA
 %
 %\theoremstyle{definition} \newtheorem{definition}{Definition}[chapter]
@@ -45,22 +58,174 @@
 %%%%% POCZĄTEK ZASADNICZEGO TEKSTU PRACY
 
 \chapter{Wprowadzenie}
+Praca ta ma na celu pomoc w zapoznaniu czytelnika z omawianą biblioteką.
+Zadbano aby nie zabrakło tutaj podstawowego wprowadzenia teoretycznego oraz praktycznego omówienia przypadków użycia tej biblioteki.
+
 \chapter{Wprowadzenie Teoretyczne}
 \section{Przeszukiwanie po możliwych ruchach w grach planszowych}
-\section{Algorytm MinMax}
+Jednym z podstawowych problemów gier planszowych jest problem przeszukiwania.
+Na tym etapie biblioteka głównie jest skupiona na pomocy programiście poradzenia sobie właśnie z tym problemem.
+Na potrzeby tej pracy wybrano trzy algorytmy przeszukiwania: MiniMax, Alpha-Beta oraz Monte Carlo Tree Search, które, od strony praktycznej, omówione są także w tym wprowadzeniu.
+Sam wstęp teoretyczny jest przewidziany jak bardzo ogólne omówienie tych algorytmów - dający jedynie niewielkie rozróznienie pomiędzy nimi. Jest ono pisane z punktu widzenia przyszłego użytkownika - programisty.
+Szczegółowe omówienie łatwo można znaleźć w wielu pracach - dlatego praca ta zapewnia jedynie ramowe przedstawienie tych metod.
+\section{Algorytm MiniMax}
+\subsection{Pełny algorytm MiniMax}
+Algorytm MiniMax w podstawowej wersji (pełny MiniMax) przegląda wszystkie możliwe ruchy i buduje całe drzewo gry.
+Algorytm ten zakłada, że zarówno gracz jak i przeciwnik będą wykonywać najlepsze, dla siebie, ruchy.
+Na podstawie tak zbudowanego drzewa gry algorytm wybiera najlepszy możliwy ruch.
+
+Wady:
+\begin{itemize}
+  \item Wolny w działaniu
+  \item Potrzebuje bardzo dużo pamięci
+  \item Ze względu na dwie pierwsze wady - raczej nie wykorzystywany
+\end{itemize}
+
+Zalety:
+\begin{itemize}
+  \item Podaje optymalne ruchy
+  \item Nie wymaga heurystyk
+\end{itemize}
+\subsection{Algorytm MiniMax z obcięciami}
+Algorytm MiniMax z obcięciami działa tak samo jak pełny minimax - z tą różnicą, że gdy algorytm rozbuduje drzewo gry do pewnej wysokości przestaje rozbudowywać i wywołuje funkcję heurystyczną w celu oceny wygranej
+
+Wady:
+\begin{itemize}
+  \item Wolny w działaniu, ale szybszy niż pełny MiniMax
+  \item Wymaga funkcji oceny stanu gry - czesto stworzenie takiej funkcji jest skomplikowanym zadaniem
+\end{itemize}
+
+Zalety:
+\begin{itemize}
+  \item Można ograniczyć wykorzystanie pamięci przez drzewo gry
+  \item Dzięki funckji oceny czas działania powinien być szybszy niż w przypadku pełnego MiniMaxa
+\end{itemize}
 \section{Algorytm Alpha-Beta}
+Algorytm Aplha-Beta to w praktyce zmodyfikowana wersja MiniMaxa - algorytm pomija pewne bezsensowne przeszukiwania.
+Z punktu widzenia programisty można z tego algorytmu korzystać jak z MiniMaxa
+
+Wady:
+\begin{itemize}
+  \item Jeśli nie chcemy rozbudowywać drzewa do samego końca to wymaga funkcji oceny stanu gry
+\end{itemize}
+
+Zalety:
+\begin{itemize}
+  \item Dużo szybszy niż MiniMax (przykład to zaimplementowana na potrzeby pracy gra kółko i krzyżyk)- nadaje się do praktycznego wykorzystania
+  \item W porównaniu do MiniMax lepsze zarządzanie pamięcią
+\end{itemize}
 \section{Algorytm Monte Carlo Tree Search}
-\chapter{Biblioteka Ułatwiająca Tworzenie Agentów do Gier Planszowych}
+Algorytm ten jest zbieżny do MiniMaxa (w praktyce wolno zbiega). Posiada szerokie zastosowanie.
+Główną siłą napędową sukcesów tego algorytmów jest przeprowadzanie losowych rozgrywek.
+Na podstawie wygranych są podejmowane decyzje, który ruch jest najlepszy.
+Z punktu widzenia programisty można z niego korzystać tak samo jak z poprzednich metod - warto jednak znać jego wady i zalety.
+
+Wady:
+\begin{itemize}
+  \item Istnieją gry w których losowa rozgrywka może trwać bardzo długo
+  \item Szczególnie przy majej liczbie symulacji łatwo można otrzymać ruch nieoptymalny
+\end{itemize}
+
+Zalety:
+\begin{itemize}
+  \item Dobre zarządzanie pamięcią
+  \item Łatwo ograniczyć czasowo jego wykonanie (przez odpowiednią liczbę symulacji)
+  \item Nie wymaga heurystyki - losowe rozgrywki spełniają tę rolę
+  \item Sukcesy w złożonych, trudnych grach (np. Go)
+\end{itemize}
+\section{Podsumowanie}
+Powyższe przedstawienie miało charakter bardzo praktyczny i ogólny.
+Jeśli czytelnik czuje z tego powodu niedosyt wiedzy lub też z ciekawości chciałby poznać szczegóły tych algorytmów to proszony jest o skorzystanie ze źródeł wymienionych w bibliografi.
+\chapter{Omówienie biblioteki do pisania agentów}
 \section{Co wchodzi w skład biblioteki}
-\section{Czego biblioteka nie zawiera}
+W skład biblioteki wchodzi:
+\begin{itemize}
+  \item plik agent\textunderscore module.py - jest to moduł do pythona zawierający najważniejsze funkcje
+  \item plik game\textunderscore template.py - jest to plik z szablonem gry planszowej mający na celu ułatwić projektowanie gry.
+  \item ox.py, connect4.py, fox\textunderscore game.py, reversi.py - przykłady tworzenia gier planszowych
+\end{itemize}
 \section{Omówienie szablonu gier planszowych}
+Swoją pracę z omawianą biblioteką należy zacząć od zrozumienia pliku game\textunderscore template.py.
+Na wstępie warto powiedzieć, że prawidłowe korzystanie z tego pliku polega na skopiowaniu go i poprawnym wyedytowaniu na potrzeby nowej gry.
+\subsection{class GameTemplate}
+W pliku tym znajduje się klasa GameTemplate jest to najważniejsza część tego pliku.
+Jak można zauważyć klasa ta zawiera wiele metod - nazwy tych metod nie powinny być zmieniane, ponieważ agent\textunderscore module.py korzysta z nich w swoich funkcjach.
+Klasa ta to abstrakcyjny model gry planszowej - zawierający wszystkie niezbędne funkcje - które powinno się zaimplementować.
+\subsection{Przykładowe AI}
+W tym samym pliku, poniżej wcześniej wspomnianej klasy - można znaleźć klasę NPCPlayer. Ten przykład jest bardzo prosty - jest to zwykły agent grający losowo.
+W tym miejscu warto wspomnieć, że nasz moduł do agentów wykorzystuje pole player\textunderscore id - powinien być to unikatowy id dla agenta - niekoniecznie to musi być, jak w przykładzie, jego pionek.
+Niemniej jednak na potrzeby funkcji z agenta to pole powinno być zapewnione.
+
+Na końcu tego pliku widać dwie linijki kodu, które odpowiadają za inicjalizacje oraz uruchomienie gry.
 \section{Propozycja implementowania gier planszowych z wykorzystaniem biblioteki}
+Dla ułatwienia pisania programu oraz szybkiego zapoznania się z biblioteką warto omówić rutynowe czynności, które występują przy pracy z omawianą biblioteką.
+Poniżej omówione są dwie zawsze występujące, rutynowe, czynności.
 \subsection{Tworzenie gry planszowej}
+Tworzenie gry planszowej przy pomocy tej biblioteki sprowadza się do:
+\begin{itemize}
+  \item Zmiany nazwy klasy GameTemplate na nazwę gry
+  \item implementacji logiki gry w metodach tej klasy (zgodnie z komentarzami)
+  \item implementacji interfejsu graficznego gry
+  \item tetowania programu
+\end{itemize}
+
 \subsection{Tworzenie Agenta}
-\section{Przykład programu napisanego z wykorzystaniem omawianej biblioteki}
+Tworzenie agenta w abstrakcyjnym ujęciu sprowadza sie do:
+\begin{itemize}
+  \item zmiany nazwy klasy agenta z pliku game\textunderscore template.py
+  \item zapisanie logiki agenta w metodzie make\textunderscore move
+\end{itemize}
+
+\section{Przykład oraz omówienie programu napisanego z wykorzystaniem omawianej biblioteki}
+\subsection{Kod gry kółko i krzyżyk}
+\lstinputlisting{../ox.py}
+\subsection{Wytłumaczenie powyższego kodu}
+Na początku widać klasę OX. Jest to klasa GameTemplate ze zmienioną nazwą.
+Kolejno w liniach 4-9 widać inicjalizację klasy (konstruktor):
+\lstinputlisting[firstline=4,lastline=9,firstnumber=4]{../ox.py}
+Warto zwrócić uwagę, że na samym początku tworzymy pustą planszę do gry w kółko i krzyżyk.
+kropki na naszej planszy oznaczają pola wolne.
+Klasa GameBoard przyjmuje jako parametr plansze do gry (w dowolnym formacie).
+W przypadku naszej gry jej użycie nie jest konieczne.
+Sama ta klasa zapewnia najbardziej podstawowe funkcje do debugowania i wspomagające operacje na planszach typu tablica dwuwymiarowa.
+
+Kolejna metoda klasy OX to get\textunderscore opponent
+\lstinputlisting[firstline=11,lastline=15,firstnumber=11]{../ox.py}
+Metoda ta ma na celu podanie przeciwnika dla podanego w parametrze gracza.
+Jest to funkcja z której korzystają algorytmy takie jak alpha-beta, minimax - stąd potrzeba jej implementacji.
+
+Dalej można znaleźć metody dwie kolejne metody wymagane przez bibliotekę:
+\lstinputlisting[firstline=17,lastline=26,firstnumber=11]{../ox.py}
+
+Pierwsza z tych funkcji get\textunderscore allowed\textunderscore moves powinna zwracać wszystkie możliwe ruchy dla danego gracza.
+Format odpowiedzi to powinna być tablica ruchów właśiwie w dowolnym formacie, który jest rozumiany przez funkcję apply\textunderscore move.
+W naszym wypadku gracz nie ma znaczenia, ponieważ możliwe ruchy to wolne pola na planszy (i nie zależy to od gracza).
+Funkcja ta przyjmuje gracza jako argument tylko dla wymagań biblioteki.
+Obydwie te funkcje są potrzebne do poprawnego działania algorytmów przeszukiwania.
+
+Ostatnie dwie ważne funkcje to is\textunderscore winner oraz game\textunderscore end.
+Pierwsza z nich odpowiada czy gracz podany jako argument jest zwycięzcą gry, druga odpowiada na pytanie czy gra jest zakończona.
+Podobnie jak wyżej te funkcje są potrzebne dla wyżej wymienionych algorytmów i implementują logikę właściwą dla konkretnej gry.
+
+Pozostała część kodu to funkcjonalności potrzebne do działania gry, stworzone w sposób opisana w poprzednim punkcie tego rozdziału.
+
 \section{Propozycje dalszego rozwoju biblioteki}
+Sam temat pracy jest bardzo rozległy.
+Praca zaś nie pokrywa w całości tematu pracy - dlatego też zamieszczam tutaj propozycje dalszego rozwoju:
+\begin{itemize}
+  \item Dodanie algorytmów do wyszukiwania ścieżek (Dijkstra (A*) itp.)
+  \item Dodanie innych algorytmów do przeszukiwania (Simulated annealing, Local Beam Search itp.)
+  \item Przemyślenia wsparcia dla sieci neuronowych i deep learningu.
+  \item Liczne optymalizacje
+  \item Ze względu na to, że sam python działa stosunkowo wolno - stworzenie wersji blioteki w C/C++
+  \item Dodanie testów automatycznych.
+\end{itemize}
+
 \chapter{Zakończenie}
-\ldots
+
+Jak widać, praca nie wyczerpuje w pełni, szerokiego zagadnienia - jakim są algorytmy do gier planszowych.
+Praca ta implementuje funkcjonalności, które na poziomie projektowania okazały się najbardziej znaczące.
+Niemniej jednak aktualna praca pozwala na wykorzystywanie jej w wielu prostszych grach, a wymuszona architekura ma pomóc pozbyć się niepotrzebnych, powtarzalnych problemów związanych z projektowaniem kodu w grach planszowych.
 
 %%%%% BIBLIOGRAFIA
 

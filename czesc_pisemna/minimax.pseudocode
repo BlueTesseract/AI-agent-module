@@ -1,0 +1,17 @@
+def minimax(player, state):
+    if game_end(state):
+        if is_winner(player, state):
+            return win_value
+        elif is_winner(opponent(player), state):
+            return lost_value
+        else
+            return draw_value
+
+    res = []
+    for s' in all_allowed_next_states(state):
+        res.append(minimax(player, s'))
+
+    if is_player_turn(player, state):
+        return max_from_next_state_list(res)
+    else
+        return min_from_next_state_list(res)

@@ -1,7 +1,7 @@
 % Opcje klasy 'iithesis' opisane sa w komentarzach w pliku klasy. Za ich pomoca
 % ustawia sie przede wszystkim jezyk i rodzaj (lic/inz/mgr) pracy, oraz czy na
 % drugiej stronie pracy ma byc skladany wzor oswiadczenia o autorskim wykonaniu.
-\documentclass[declaration,shortabstract,inz]{iithesis}
+\documentclass[polish,shortabstract,inz]{iithesis}
 
 \usepackage[utf8]{inputenc}
 
@@ -17,7 +17,9 @@
 W pracy tej została opisana tytułowa biblioteka oraz minimalne wprowadzenie teoretyczne potrzebne do zrozumienia działania, napisanego na potrzeby pracy, modułu python'owego.
 Niemniej jednak, głównym celem tej pracy było nauczenie czytelnika z korzystania możliwości oferowanych przez powyższą bibliotekę - znaczy to tyle, że nie jest to podręcznik do nauki zagadnień związanych ze sztuczną inteligencją.
 }
-\englishabstract{\ldots}
+\englishabstract{
+\ldots
+}
 % w pracach wielu autorow nazwiska mozna oddzielic poleceniem \and
 \author         {Mikołaj Kowalik}
 % w przypadku kilku promotorow, lub koniecznosci podania ich afiliacji, linie
@@ -62,13 +64,18 @@ Niemniej jednak, głównym celem tej pracy było nauczenie czytelnika z korzysta
 %%%%% POCZĄTEK ZASADNICZEGO TEKSTU PRACY
 
 \chapter{Wprowadzenie}
-Podstawowym celem tej pracy jest zapoznanie użytkownika-programisty z obsługą tytułowej biblioteki.
+Jednym z naturalnych miejsc do testowania sztucznej inteligencji są gry planszowe.
+Na potrzeby kursu sztuczna inteligencja, student miał za zadanie, oprócz testowania, implementowania dużej ilości gier planszowych.
+Celem tej pracy jest wyjście na przeciw potrzebom jakie powstały podczas tamtego kursu i opracowanie odpowiedniego modułu napisanego w Pythonie.
+Tak więc, podstawowym celem tej pracy jest zapoznanie użytkownika-programisty z obsługą tytułowej biblioteki - która ma ułatwić pewne powtarzalne czynności - z jakimi trzeba się zmierzyć podczas pisania gry planszowej z inteligentnym, komputerowym graczem.
 Praca ta zapewnia rozdziały takie jak:
 \begin{itemize}
   \item Wprowadzenie teoretyczne - przewidziane dla osób, które chcą poznać w minimalnym stopniu różnice pomiędzy, implementowanymi w pracy, algorytmami przeszukiwania (MiniMax, Alpha-Beta, MCTS). Osoby, które są zapoznane z tymi algorytmami mogą, bez straty dla zrozumienia biblioteki, pominąć ten rozdział.
   \item Rozdział poświęcony opisowi i przykładom użycia biblioteki - znaleźć tu można podrozdziały takie jak:
     \begin{itemize}
+      \item Opis środowiska uruchomieniowego.
       \item Omówienie zawartości biblioteki.
+      \item Omówienie zasad gier planszowych pojawiających się w pracy.
       \item Omówienie fragmentów kodu, które zostały uznane za potrzebne do wytłumaczenia.
       \item Propozycje dalszego rozwoju biblioteki - zostały tam przedstawione liczne propozycje usprawnień oraz rozbudowy tej biblioteki.
     \end{itemize}
@@ -186,12 +193,19 @@ Powyższe przedstawienie miało charakter bardzo praktyczny i ogólny.
 Jeśli czytelnik czuje z tego powodu niedosyt wiedzy lub też z ciekawości chciałby poznać szczegóły tych algorytmów to proszony jest o skorzystanie ze źródeł wymienionych w bibliografi.
 
 
-
 \chapter{Omówienie biblioteki do pisania agentów}
+W rozdziale tym zostało opisane wszystko co potrzebne by nauczyć się używać tego modułu.
+\section{Środowisko pisania modułu}
+Podczas pisania biblioteki użyto:
+\begin{itemize}
+  \item System operacyjny - Ubuntu 18.04
+  \item Python 3.6.7
+  \item Moduły do pythona takie jak: random, math, copy.
+\end{itemize}
 \section{Co wchodzi w skład biblioteki}
 W skład biblioteki wchodzi:
 \begin{itemize}
-  \item plik agent\textunderscore module.py - jest to moduł do pythona zawierający najważniejsze funkcje
+  \item plik agent\textunderscore module.py - jest to moduł do pythona zawierający najważniejsze funkcje/klasy.
   \item plik game\textunderscore template.py - jest to plik z szablonem gry planszowej mający na celu ułatwić projektowanie gry.
   \item ox.py, connect4.py, fox\textunderscore game.py, reversi.py - przykłady tworzenia gier planszowych
 \end{itemize}
@@ -268,7 +282,7 @@ Przykładowa implementacja tej gry znajduje się w pliku reversi.py
 
 
 \section{Omówienie szablonu gier planszowych}
-Swoją pracę z omawianą biblioteką należy zacząć od zrozumienia pliku game\textunderscore template.py.
+Swoją pracę z omawianą biblioteką powinno się zacząć od zrozumienia pliku game\textunderscore template.py.
 Na wstępie warto powiedzieć, że prawidłowe korzystanie z tego pliku polega na skopiowaniu go i poprawnym wyedytowaniu na potrzeby nowej gry.
 
 \subsection{class GameTemplate}
@@ -301,10 +315,59 @@ Tworzenie agenta w abstrakcyjnym ujęciu sprowadza sie do:
   \item zapisanie logiki agenta w metodzie make\textunderscore move
 \end{itemize}
 
+\section{Opis agent\textunderscore module.py}
+Plik agent\textunderscore module.py to tytułowy moduł, który ma ułatwiać pisanie sztucznej inteligencji do gier planszowych.
+Warte omówienia (ze względu na użycie) są trzy klasy, które się tutaj znajdują:
+\begin{itemize}
+  \item GameBoard
+  \item AgentAI
+  \item HumanPlayer
+\end{itemize}
+
+\subsection{Klasa GameBoard}
+Klasa GameBoard zawiera metody takie jak:
+\begin{itemize}
+  \item is\textunderscore on\textunderscore board - zwraca prawdę jeżeli dane współrzędne leżą na planszy - fałsz w przeciwnym wypadku.
+  \item count\textunderscore symbol - zwraca liczbę wystąpienia znaku na planszy.
+  \item is\textunderscore unoccupied - odpowiada na pytanie czy dane pole jest zajęte.
+  \item is\textunderscore occupied - logiczna negacja poprzedniej metody.
+  \item print\textunderscore board - funkcja do wypisywania na konsoli planszy
+\end{itemize}
+Sposoby użycia tej klasy są dobrze widoczne w dołączonych przykładowych grach.
+
+\subsection{Klasa AgentAI}
+Klasa AgentAI zawiera pola i metody - poniżej ważniejsze z nich.
+Ważniejsze pola uzywane w funkcji init:
+\begin{itemize}
+  \item player\textunderscore id - unikatowe id gracza - służy do jego identyfikacji
+  \item game\textunderscore heuristic - funkcja oceniająca grę - domyślna heurystyka symuluje losowe rozgrywki i na tej podstawie ocenia.
+  \item max\textunderscore depth - maksymalna głębokość budowangeo drzewa dla funkcji takich jak minimax etc.
+  \item number\textunderscore simulations - liczba symulacji dla funkcji takich jak mcts etc.
+\end{itemize}
+
+Ważniejsze metody używane w klasie agenta:
+\begin{itemize}
+  \item minimax\textunderscore move - funkcja zwraca ruch wybrany metodą MiniMax.
+  \item random\textunderscore move - funkcja zwraca losowy ruch.
+  \item alpha\textunderscore beta\textunderscore move - funkcja zwraca ruch wybrany algorytmem Alpha-Beta.
+  \item mcts\textunderscore move - funkcja zwraca ruch wybrany przez algorytm Monte Carlo Tree Search.
+\end{itemize}
+Przykłady użycia również widoczne są w przykładowych grach np. fox\textunderscore game.py
+
+\subsection{Klasa HumanPlayer}
+Klasa HumanPlayer została zaimplementowana jako pomoc przy debugowaniu.
+Jej celem jest zapewnienie minimalnej wizualizacji możliwych ruchów oraz możliwość wybrania go przez człowieka.
+Klasy ta dziedziczy po AgentAI, a co więcej jest używana tak jak inni gracze w przykładowych programach.
+Dla przykładu znaczy to, że aby zagrać w grę kółko i krzyży wystarczy w pliku ox.py linię:
+\lstinputlisting[firstline=95,lastline=95,firstnumber=95]{../ox.py}
+zamienić na:
+\lstinputlisting[firstnumber=95]{humanplayer}
+uprzednio importując z tego modułu klasę HumanPlayer.
+
 \section{Omówienie kodu do gry w kółko i krzyżyk}
 Na potrzeby omówienia tej pracy wybrano grę w kółko i krzyżyk.
 Sama gra nie jest w żaden sposób interesująca.
-Grę tą wybrano tylko ze względu na prostotę logiki oraz zwięzłość kodu - możliwego do umieszczenia w tej pracy.
+Grę tą wybrano jedynie ze względu na prostotę logiki oraz zwięzłość kodu - możliwego do umieszczenia w tej pracy.
 \subsection{Kod gry kółko i krzyżyk}
 \lstinputlisting{../ox.py}
 \subsection{Wytłumaczenie powyższego kodu}
@@ -341,11 +404,9 @@ Pozostała część kodu to funkcjonalności potrzebne do działania gry, stworz
 Sam temat pracy jest bardzo rozległy.
 Praca zaś nie pokrywa w całości tematu pracy - dlatego też zamieszczam tutaj propozycje dalszego rozwoju:
 \begin{itemize}
-  \item Dodanie algorytmów do wyszukiwania ścieżek (Dijkstra (A*) itp.)
-  \item Dodanie innych algorytmów do przeszukiwania (Simulated annealing, Local Beam Search itp.)
+  \item Dodanie innych prostych algorytmów (A*, DFS, BFS (wykorzystywane na kursie z AI))
   \item Przemyślenia wsparcia dla sieci neuronowych i deep learningu.
-  \item Liczne optymalizacje
-  \item Ze względu na to, że sam python działa stosunkowo wolno - stworzenie wersji blioteki w C/C++
+  \item Ze względu na to, że sam python działa stosunkowo wolno, a pisane programy na kursie sztucznej inteligencji są również pisane w języku C++ - stworzenie wersji blioteki w C/C++
   \item Dodanie testów automatycznych.
 \end{itemize}
 

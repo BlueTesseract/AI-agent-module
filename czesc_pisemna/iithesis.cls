@@ -171,8 +171,7 @@
 \renewcommand \maketitlehookb {
   \vfilneg
   \begin{center}\large
-  \if@pol{\selectlanguage{english}(\@englishtitle)}
-         {\selectlanguage{polish}(\@polishtitle)}
+    \selectlanguage{english}(\@englishtitle)
   \end{center}
   \selectlanguage{polish}
 }
@@ -204,8 +203,8 @@
 \RequirePackage[pdftex,unicode=true]{hyperref}
 
 \AtBeginDocument{
-  \if@pol{\selectlanguage{polish}\old@title{\bfseries\@polishtitle\mdseries}}
-         {\selectlanguage{english}\old@title{\bfseries\@englishtitle\mdseries}}
+  \if@pol{\selectlanguage{english}\old@title{\bfseries\@englishtitle\mdseries}}
+         {\selectlanguage{polish}\old@title{\bfseries\@polishtitle\mdseries}}
   \let\old@nd\and
   \renewcommand \and {, }
   \hypersetup{pdfauthor={\@author},pdftitle={\@title} }
@@ -222,10 +221,9 @@
   \if@long{\end{abstract}}{\begin{center}\rule[3pt]{300pt}{1pt}\end{center}\par}
   \if@pol {\selectlanguage{english}}{\selectlanguage{polish}}
   \if@long{\clearpage\begin{abstract}\par}{}
-  \if@pol {\noindent\@englishabstract\selectlanguage{polish}}
-          {\frenchspacing\@polishabstract\selectlanguage{english}}
+  \noindent\@englishabstract\selectlanguage{polish}
   \end{abstract}
-  \if@long{\if@pol{\selectlanguage{polish}}{\selectlanguage{english}}}{}
+%  \if@long{\if@pol{\selectlanguage{polish}}{\selectlanguage{english}}}{}
   \tableofcontents
 }
 

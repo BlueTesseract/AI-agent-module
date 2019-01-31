@@ -141,7 +141,7 @@ class MCTSTree:
 
 
 class AgentAI:
-	def __init__(self, player_id, game_heuristic=None, number_simulations=100, max_depth=math.inf):
+	def __init__(self, player_id, game_heuristic=None, number_simulations=10, max_depth=math.inf):
 		self.player_id = player_id
 		self.game_heuristic = game_heuristic
 		self.number_simulations = number_simulations

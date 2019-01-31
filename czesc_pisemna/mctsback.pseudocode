@@ -1,0 +1,9 @@
+def mcts_backpropagation(player, game_result, node):
+    win_val = 0
+    if is_winner(player, game_result):
+        win_val = 1
+
+    while node != Null:
+        node.wins += add_val
+        node.simulation += 1
+        node = node.parent

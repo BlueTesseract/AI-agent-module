@@ -1,11 +1,11 @@
 def minimax(player, state):
     if game_end(state):
         if is_winner(player, state):
-            return win_value
+            return (win_value, state)
         elif is_winner(opponent(player), state):
-            return lost_value
+            return (lost_value, state)
         else
-            return draw_value
+            return (draw_value, state)
 
     res = []
     for s' in all_allowed_next_states(state):

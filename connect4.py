@@ -5,7 +5,6 @@ class Connect4:
 		self.rows = rows
 		self.cols = cols
 		self.board = [['.' for _ in range(cols)] for _ in range(rows)]
-
 		self.player1 = player1
 		self.player2 = player2
 		self.current_player = player1
@@ -112,15 +111,6 @@ class Connect4:
 		self.print_game_result()
 
 
-class NPCPlayerMCTS(AgentAI):
-	def __init__(self, player_id):
-		super().__init__(player_id, number_simulations=20)
-
-	def make_move(self, game):
-		move = self.mcts_move(game)
-		game.apply_move(self, move)
-
-
 class NPCPlayerRandom(AgentAI):
 	def __init__(self, player_id):
 		super().__init__(player_id)
@@ -130,5 +120,5 @@ class NPCPlayerRandom(AgentAI):
 		game.apply_move(self, move)
 
 
-game = Connect4(NPCPlayerRandom('x'), NPCPlayerMCTS('o'))
+game = Connect4(NPCPlayerRandom('x'), NPCPlayerRandom('o'))
 game.start_game()

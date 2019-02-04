@@ -5,7 +5,7 @@ class OX:
         self.board = [['.', '.', '.'],
                       ['.', '.', '.'],
                       ['.', '.', '.']]
-        self.board = GameBoard(self.board)
+        self.board = GameBoard(self.board, p1=['x'], p2=['o'])
         self.player1 = player1
         self.player2 = player2
         self.current_player = player1

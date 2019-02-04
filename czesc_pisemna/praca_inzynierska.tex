@@ -333,7 +333,7 @@ W rozdziale tym zostało opisane wszystko co potrzebne, by nauczyć się używa�
 Podczas pisania biblioteki użyto:
 \begin{itemize}
   \item System operacyjny - Ubuntu 18.04
-  \item Python 3.6.7 wraz ze standardowymi modułami.
+  \item Python 3.6.7 wraz ze standardowymi modułami oraz colorama.
 \end{itemize}
 \section{Co wchodzi w skład biblioteki}
 W skład biblioteki wchodzi:
@@ -488,7 +488,8 @@ Klasa GameBoard zawiera metody takie jak:
   \item count\textunderscore symbol - zwraca liczbę wystąpienia znaku na planszy.
   \item is\textunderscore unoccupied - odpowiada na pytanie czy dane pole jest zajęte.
   \item is\textunderscore occupied - logiczna negacja poprzedniej metody.
-  \item print\textunderscore board - funkcja do wypisywania w konsoli (znakami ascii) planszy do gry (domyślnie dodana jest colorama i numeracja z boku i z góry planszy). Można przekazać do tej funkcji jako parametry: colorama=false, board\textunderscore labels=false.
+  \item print\textunderscore board - funkcja do wypisywania w konsoli (znakami ascii - colorama) planszy do gry.
+  Funkcja jest domyślnie skonfigurwana. 1
 \end{itemize}
 Sposoby użycia tej klasy są dobrze widoczne w dołączonych przykładowych grach.
 
@@ -518,7 +519,7 @@ Klasa HumanPlayer została zaimplementowana jako pomoc przy debugowaniu.
 Jej celem jest zapewnienie minimalnej wizualizacji możliwych ruchów oraz możliwość wybrania go przez człowieka.
 Klasy ta dziedziczy po AgentAI, a co więcej jest używana tak jak inni gracze w przykładowych programach.
 Dla przykładu znaczy to, że aby zagrać w grę kółko i krzyży wystarczy w pliku ox.py linię:
-\lstinputlisting[firstline=95,lastline=95,firstnumber=95]{../ox.py}
+\lstinputlisting[firstline=97,lastline=97,firstnumber=97]{../ox.py}
 zamienić na:
 \lstinputlisting[firstnumber=95]{humanplayer}
 uprzednio importując z tego modułu klasę HumanPlayer.
@@ -531,21 +532,21 @@ Grę tą wybrano jedynie ze względu na prostotę logiki oraz zwięzłość kodu
 \lstinputlisting{../ox.py}
 \subsection{Wytłumaczenie powyższego kodu}
 Na początku widać klasę OX. Jest to klasa GameTemplate ze zmienioną nazwą.
-Kolejno w liniach 4-9 widać inicjalizację klasy (konstruktor):
-\lstinputlisting[firstline=4,lastline=9,firstnumber=4]{../ox.py}
+Kolejno w liniach 4-11 widać inicjalizację klasy (konstruktor):
+\lstinputlisting[firstline=4,lastline=11,firstnumber=4]{../ox.py}
 Warto zwrócić uwagę, że na samym początku tworzymy pustą planszę do gry w kółko i krzyżyk.
 kropki na naszej planszy oznaczają pola wolne.
-Klasa GameBoard przyjmuje jako parametr plansze do gry (w dowolnym formacie).
+Klasa GameBoard przyjmuje jako parametr plansze do gry (w dowolnym formacie) oraz listy symboli dla graczy - potrzebne dla funkcji print\textunderscore board.
 W przypadku naszej gry jej użycie nie jest konieczne.
 Sama ta klasa zapewnia najbardziej podstawowe funkcje do debugowania i wspomagające operacje na planszach typu tablica dwuwymiarowa.
 
 Kolejna metoda klasy OX to get\textunderscore opponent
-\lstinputlisting[firstline=11,lastline=15,firstnumber=11]{../ox.py}
+\lstinputlisting[firstline=13,lastline=17,firstnumber=13]{../ox.py}
 Metoda ta ma na celu podanie przeciwnika dla podanego w parametrze gracza.
 Jest to funkcja z której korzystają algorytmy takie jak alpha-beta, minimax - stąd potrzeba jej implementacji.
 
 Dalej można znaleźć metody dwie kolejne metody wymagane przez bibliotekę:
-\lstinputlisting[firstline=17,lastline=26,firstnumber=11]{../ox.py}
+\lstinputlisting[firstline=19,lastline=26,firstnumber=19]{../ox.py}
 
 Pierwsza z tych funkcji get\textunderscore allowed\textunderscore moves powinna zwracać wszystkie możliwe ruchy dla danego gracza.
 Format odpowiedzi to powinna być tablica ruchów właśiwie w dowolnym formacie, który jest rozumiany przez funkcję apply\textunderscore move.
@@ -613,8 +614,8 @@ Liczne propozycje usprawnień oraz rozbudowy, wychodzące poza zakres tej pracy,
 
 %%%%% BIBLIOGRAFIA
 
-\begin{thebibliography}{1}
-\bibitem{example} \ldots
-\end{thebibliography}
+%\begin{thebibliography}{1}
+%\bibitem{example} \ldots
+%\end{thebibliography}
 
 \end{document}

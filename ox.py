@@ -94,5 +94,5 @@ class NPCPlayerAlphaBeta(AgentAI):
         game.apply_move(self, move)
 
 
-game = OX(NPCPlayerAlphaBeta('x'), NPCPlayerAlphaBeta('o'))
+game = OX(NPCPlayer('x'), NPCPlayerAlphaBeta('o'))
 game.start_game()

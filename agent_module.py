@@ -61,17 +61,22 @@ class GameBoard:
             return default_color+field
 
 
-    def print_board(self, f1=Back.GREEN, f2=Back.YELLOW, board_color=Back.RESET, sep='', p1=Fore.BLACK, p2=Fore.WHITE, default=Fore.RESET):
+    def print_board(self, f1=Back.GREEN, f2=Back.YELLOW, board_color=Back.RESET, sep='', p1=Fore.BLACK, p2=Fore.WHITE, default=Fore.RESET, top_label=True, left_label=True):
         board_sep = Style.RESET_ALL+board_color+sep
         row = 0
-        offset = " "
-        # Top Label
-        print(offset + " "*len(sep) + (" "*len(sep)).join(map(lambda x: str(x%10), range(len(self.board[0])))))
+        offset = ""
+        if left_label == True:
+            offset = "  "
+
+        if top_label == True:
+            if len(self.board[0]) >= 10:
+                print(offset + " "*len(sep) + (" "*len(sep)).join(map(lambda x: " " if x//10 == 0 else str(x//10), range(len(self.board[0])))))
+            print(offset + " "*len(sep) + (" "*len(sep)).join(map(lambda x: str(x%10), range(len(self.board[0])))))
 
         for r in self.board:
             print(
                 Style.RESET_ALL
-                +str(row%10)
+                + ('{0:>2}'.format(str(row)) if left_label else "")
                 +board_sep
                 +board_sep.join(
                     map(lambda x: f1+x[1] if (x[0]+row)%2 else f2+x[1],

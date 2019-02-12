@@ -132,7 +132,7 @@ class NPCPlayerAlphaBeta(am.AgentAI):
 
 class NPCPlayerMCTS(am.AgentAI):
     def __init__(self, player_id):
-        super().__init__(player_id, number_simulations=300)
+        super().__init__(player_id, number_simulations=100)
 
     def make_move(self, game):
         print("MCTS is thinking")

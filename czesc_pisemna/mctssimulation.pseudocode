@@ -1,3 +1,0 @@
-def mcts_simulation(node):
-    game_result = play_random_game(node)
-    return game_result
